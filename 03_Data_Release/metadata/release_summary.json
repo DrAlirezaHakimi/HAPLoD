@@ -1,0 +1,22 @@
+{
+  "version": "1.1.0",
+  "generated_utc": "2026-09-06T10:25:36.958257+00:00",
+  "stats": {
+    "canonical_points": 18981,
+    "canonical_tracks": 632,
+    "nh_tracks": 375,
+    "sh_tracks": 257,
+    "memberships": 745,
+    "std_tracks": 346,
+    "event_records": 1073,
+    "impmct_cloud": 16001,
+    "impmct_era": 49435,
+    "potential_crosslinks": 7
+  },
+  "architecture": {
+    "track_resolved": "six ERA5-matched literature catalogues reconciled into canonical track-time records",
+    "event_resolved": "Farjami & Kazemi (2024) Southern Ocean event snapshots, kept separate because only day-level event records are supplied",
+    "validation": "IMPMCT and Rojo raw satellite positions"
+  },
+  "important_limitation": "HAPLoD is a harmonized reference database, not a uniformly detected climatology. Track-resolved and event-resolved layers must not be pooled as exchangeable samples."
+}
