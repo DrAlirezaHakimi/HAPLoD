@@ -1,7 +1,7 @@
-# ACTION REQUIRED: choose and confirm a software licence before public release
+# Software licence decision — HAPLoD v1.1.2
 
-If both authors confirm that they can license all of the original scripts, add a `LICENSE` file (for example, the full MIT license text) before creating the GitHub release.
+The corresponding authors have reported that the scientific and legal authorisations for release have been completed, as of 2026-10-25. On that basis, **MIT** has been selected for the original HAPLoD software published in this GitHub repository; see [LICENSE](LICENSE).
 
-Do NOT extend that software licence to input datasets with separate copyright/licences.
+This assertion is an author-provided statement, not independently verified written evidence of each copyright holder's authorisation. The authors must preserve their authorisation records, including any required approvals from co-owners. Do not treat the GitHub MIT licence as permission to republish separately obtained third-party datasets or source workbooks.
 
-When describing software in Zenodo, enter verified authors and grant information. Do not invent ORCIDs, institutional grants, or DOIs.
+The HAPLoD dataset is a separate Zenodo record subject to its own source-specific metadata, notices, and rights.
