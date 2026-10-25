@@ -1,12 +1,18 @@
-# HAPLoD v1.1.2 software verification guide
+# Reproducibility and validation — HAPLoD v1.1.2
 
-The full dataset is deposited separately. To perform the documented checks, unpack its `03_Data_Release` directory at the repository root.
+The dataset is maintained and distributed **separately from GitHub**. Obtain the HAPLoD v1.1.0 complete data archive (including 21 compressed CSV tables, database schema and SQLite database).
 
-1. Run `python 04_Code/validate_release.py` to check integrity and essential counts.
-2. Run `python 04_Code/test_sql_examples.py` to execute every SQL query in `04_Code/SQL_EXAMPLES.sql`.
-3. Run `python 04_Code/rebuild_release_sqlite.py --output reconstructed_haplod.sqlite` to rebuild the **released table snapshot** from all 21 CSV exports and the released schema.
-4. Run `python 04_Code/test_roundtrip.py --rebuilt reconstructed_haplod.sqlite` to compare table contents, tolerating numeric error <= 1e-10.
+After unpacking it so that `03_Data_Release` lies at the repository root:
 
-These steps do not reconstruct all upstream polar-low detections from ERA5 or observational raw input. The original raw-catalogue processing requires separate input files and independent evidence. The Farjami–Kazemi event catalogue must not be described as fully regenerated from source environmental measurements by these checks.
+```sh
+python 04_Code/validate_release.py
+python 04_Code/test_sql_examples.py
+python 04_Code/rebuild_release_sqlite.py --output reconstructed_haplod.sqlite
+python 04_Code/test_roundtrip.py --rebuilt reconstructed_haplod.sqlite
+```
 
-Before archiving edited software, verify the software licence, source attribution, and version-specific DOI. Do not add private Zenodo draft URLs or tokens to this public repository.
+The commands check the **database snapshot and round-trip** from released CSV tables. The round-trip compares table rows and accepts absolute numeric differences no greater than 1e-10. The CSV/SQLite round-trip does not establish raw-source reprocessing, detection reproducibility, or byte-identical SQLite databases. The supplied raw-source processing requires the original source files and a separate documented test; full re-detection of event records from environmental inputs is not claimed.
+
+The original HAPLoD code is MIT-licensed (see root LICENSE). The source datasets are *not* automatically covered by that licence. Review the source attribution and reuse terms before distributing or using upstream inputs.
+
+Version-specific software DOI must be verified from a Zenodo release; never cite a previous software version DOI as if it were v1.1.2.
