@@ -1,17 +1,15 @@
--- HAPLoD v1.1: verified queries for published SQLite schema
-SELECT canonical_track_id, hemisphere, tmi_time, tmi_lat, tmi_lon
-FROM track_summary WHERE passes_all_stoll_criteria = 1 ORDER BY hemisphere, canonical_track_id;
-
-SELECT p.* FROM track_points AS p
-JOIN track_summary AS s ON p.canonical_track_id = s.canonical_track_id
-WHERE s.passes_all_stoll_criteria = 1
-ORDER BY p.canonical_track_id, p.time;
-
-SELECT sources, COUNT(*) AS n_tracks FROM track_summary GROUP BY sources ORDER BY n_tracks DESC;
-
+-- HAPLoD v1.1 examples against actual data tables (no fabricated views).
+-- 1: standardized track list
+SELECT * FROM standardized_polar_low_tracks ORDER BY hemisphere, start_time;
+-- 2: standardized track points
+SELECT * FROM standardized_polar_low_points ORDER BY canonical_track_id, time;
+-- 3: overlap
+SELECT source_count, COUNT(*) AS tracks FROM track_summary GROUP BY source_count ORDER BY source_count;
+-- 4: retention criteria
 SELECT source, subset, n_tracks, all_criteria_pass_pct FROM criteria_validation ORDER BY source, subset;
-
-SELECT event_id, event_date, lat, lon FROM event_catalogue
-WHERE source = 'Farjami_Kazemi_2024' ORDER BY event_date;
-
-PRAGMA integrity_check;
+-- 5: warnings
+SELECT * FROM qa_warnings;
+-- 6: Farjami-Kazemi event-level records
+SELECT event_id, event_date, lat, lon, vort850_cyclonic_1e5_s1
+FROM event_catalogue WHERE source = 'Farjami_Kazemi_2024'
+ORDER BY event_date, event_id;
