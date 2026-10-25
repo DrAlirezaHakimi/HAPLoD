@@ -1,0 +1,76 @@
+name: Validate and archive HAPLoD v1.1.2 software
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate version, licence and syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import ast
+          root=Path('04_Code')
+          code=list(root.glob('*.py'))
+          assert code, "Missing software"
+          for f in code:
+              ast.parse(f.read_text(encoding='utf-8'), filename=str(f))
+          assert 'version: 1.1.2' in Path('CITATION.cff').read_text(encoding='utf-8')
+          assert 'MIT License' in Path('LICENSE').read_text(encoding='utf-8')
+          assert Path('04_Code/SQL_EXAMPLES.sql').is_file()
+          print('PASS: all Python files parse and release metadata is consistent')
+          PY
+      - name: Ensure source archives are not committed to software Git
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          forbidden=[p for p in Path('03_Data_Release').rglob('*') if p.is_file() and p.suffix in ('.sqlite','.gz','.zip')]
+          assert not forbidden, f"Dataset blobs must stay in separate DOI record: {forbidden}"
+          print('PASS: no dataset blobs shipped in Git source archive')
+          PY
+
+  archive-release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create versioned GitHub Release once (Zenodo integration handles software DOI)
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const tag = 'v1.1.2';
+            try {
+              const existing = await github.rest.repos.getReleaseByTag({owner, repo, tag});
+              core.info('Release already exists: ' + existing.data.html_url);
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              const release = await github.rest.repos.createRelease({
+                owner, repo, tag_name: tag,
+                target_commitish: context.sha,
+                name: 'HAPLoD v1.1.2 — reproducibility corrections',
+                body: [
+                  'Software patch for HAPLoD v1.1 data release.',
+                  'Adds SQL examples, dataset snapshot reconstruction tests and clear distinction between snapshot checks and original-input processing.',
+                  'The dataset is NOT included in this GitHub release; its Zenodo dataset record is separate.',
+                  'A version-specific Zenodo software DOI is assigned separately when the GitHub–Zenodo integration archives this release.',
+                  'See README.md for limitations and source-specific data attribution.'
+                ].join('\n'),
+                draft: false, prerelease: false, make_latest: 'true'
+              });
+              core.info('Created release: ' + release.data.html_url);
+            }
