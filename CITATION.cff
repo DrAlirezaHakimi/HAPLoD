@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "Please cite the archived HAPLoD software version and the separately deposited HAPLoD dataset."
+message: "Cite the version-specific archived software and the separately deposited HAPLoD dataset."
 type: software
 title: "HAPLoD: Harmonization, quality-control and visualization pipeline"
 authors:
@@ -7,9 +7,11 @@ authors:
     given-names: Alireza
   - family-names: Farjami
     given-names: Hossein
-version: 1.1.0
+version: 1.1.2
+repository-code: "https://github.com/DrAlirezaHakimi/HAPLoD"
 keywords:
   - polar low
   - ERA5
   - data harmonization
   - Southern Ocean
+# Add a new VERSION-SPECIFIC Zenodo DOI only after the v1.1.2 release is actually archived.

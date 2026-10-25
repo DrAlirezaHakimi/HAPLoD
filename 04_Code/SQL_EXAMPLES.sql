@@ -1,17 +1,27 @@
--- HAPLoD v1.1: verified queries for published SQLite schema
-SELECT canonical_track_id, hemisphere, tmi_time, tmi_lat, tmi_lon
-FROM track_summary WHERE passes_all_stoll_criteria = 1 ORDER BY hemisphere, canonical_track_id;
+-- HAPLoD v1.1: six statements verified against the actual archived schema.
+-- These query the documented 21-table snapshot, not absent views.
 
-SELECT p.* FROM track_points AS p
-JOIN track_summary AS s ON p.canonical_track_id = s.canonical_track_id
-WHERE s.passes_all_stoll_criteria = 1
-ORDER BY p.canonical_track_id, p.time;
+-- 1. Track summary
+SELECT canonical_track_id, hemisphere, n_points
+FROM track_summary ORDER BY canonical_track_id LIMIT 10;
 
-SELECT sources, COUNT(*) AS n_tracks FROM track_summary GROUP BY sources ORDER BY n_tracks DESC;
+-- 2. Track-resolved positions
+SELECT canonical_track_id, time, lon, lat
+FROM track_points ORDER BY canonical_track_id, time LIMIT 10;
 
-SELECT source, subset, n_tracks, all_criteria_pass_pct FROM criteria_validation ORDER BY source, subset;
+-- 3. Source multiplicity
+SELECT source_count, COUNT(*) AS n_tracks
+FROM track_summary GROUP BY source_count ORDER BY source_count;
 
-SELECT event_id, event_date, lat, lon FROM event_catalogue
-WHERE source = 'Farjami_Kazemi_2024' ORDER BY event_date;
+-- 4. Source-specific retention criteria
+SELECT source, subset, n_tracks, all_criteria_pass_pct
+FROM criteria_validation ORDER BY source, subset;
 
-PRAGMA integrity_check;
+-- 5. Dataset quality-control results
+SELECT area, metric, value, status
+FROM qa_results ORDER BY area, metric;
+
+-- 6. Southern Ocean event layer (day-precision timestamps only)
+SELECT event_id, event_date, lat, lon, vort850_cyclonic_1e5_s1
+FROM event_catalogue WHERE source = 'Farjami_Kazemi_2024'
+ORDER BY event_date, event_id LIMIT 20;
